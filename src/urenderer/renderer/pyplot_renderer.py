@@ -73,9 +73,9 @@ class PyplotRenderer(Renderer):
         '''
         ## SEU CÓDIGO AQUI #####################################################
         # Projete o triângulo, combinando a matriz de transformação do modelo,
-        #  view matriz (self._view_matrix) e a matriz de projeção (self._projection_matrix)
+        # view matriz (self._view_matrix) e a matriz de projeção (self._projection_matrix)
 
-        triangle_proj = self._view_matrix + self._projection_matrix
+        triangle_proj = self._view_matrix * self._projection_matrix
 
         #########################################################################
 
@@ -104,14 +104,19 @@ class PyplotRenderer(Renderer):
         # Todos os vértices do triângulo devem estar dentro do volume: -v_w <= v_x, v_y, v_z <= v_w
 
         # Checa se o triângulo removido
-        clip = (triangle[0][0] <= triangle[3][3]) and (triangle[0][0] >= -(triangle[3][3]))
-        clip = clip and (triangle[1][1] <= triangle[3][3]) and (triangle[1][1] >= -(triangle[3][3]))
-        clip = clip and (triangle[2][2] <= triangle[3][3]) and (triangle[2][2] >= -(triangle[3][3]))
+        x = triangle[0][0]
+        y = triangle[1][1]
+        z = triangle[2][2]
+        w = triangle[3][3]
+        clip = (-w <= x and x <= w) and (-w <= y and y <= w) and (-w <= z and z <= w)
 
-        if not clip:
-            # Normalize o triângulo, dividindo cada vértice pelo seu último valor v_w
-            triangle_ndc /= triangle[3]
+        # Normalize o triângulo, dividindo cada vértice pelo seu último valor v_w
+        if (triangle[3][3] != 0):
+            triangle_ndc = triangle/triangle[3][3]
+        else:
+            triangle_ndc = triangle * 0
 
+        if clip == True:
             return clip, triangle_ndc
 
         return clip, triangle
@@ -133,6 +138,7 @@ class PyplotRenderer(Renderer):
         # Mapeie o triângulo que está no intervalo [-1, 1]
         # A primeira coordenada deve ser mapeada para [0, self.screen_width]
         # A segunda coordenada deve ser mapeada para [0, self.screen_height]
+
 
         #########################################################################
 

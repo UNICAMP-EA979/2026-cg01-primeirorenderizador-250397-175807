@@ -50,14 +50,10 @@ class Node:
         S[0, 0] = self.scale[0]
         S[1, 1] = self.scale[1]
         S[2, 2] = self.scale[2]
-        S[3, 3] = 1
 
 
         # Translation matrix
         T = np.eye(4)
-
-        for i in range(4):
-            T[i, i] = 1
         
         T[0, 3] = self.translation[0]
         T[1, 3] = self.translation[1]
@@ -71,7 +67,7 @@ class Node:
         rotation = Rotation.from_euler('xyz', self.rotation, degrees=True)
         R[0:3, 0:3] = rotation.as_matrix()
 
-        final_transformation = S + T + R
+        final_transformation = T * (R * S)
 
         #########################################################################
 
