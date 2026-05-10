@@ -5,7 +5,6 @@ from typing import Callable
 import numpy as np
 from scipy.spatial.transform import Rotation
 
-
 class Node:
     '''
     Scene node.
@@ -67,7 +66,10 @@ class Node:
         rotation = Rotation.from_euler('xyz', self.rotation, degrees=True)
         R[0:3, 0:3] = rotation.as_matrix()
 
-        final_transformation = T * (R * S)
+        final_transformation = T @ (R @ S)
+
+        # Normaliza
+        final_transformation = final_transformation/final_transformation[3][3]
 
         #########################################################################
 

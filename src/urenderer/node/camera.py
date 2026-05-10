@@ -38,7 +38,7 @@ class Camera(Node):
         matrix = np.zeros((4, 4))
         aspect_ratio = self.screen_width/self.screen_height
         radianos = math.radians(self.vertical_fov/2)
-        c = 1/(math.tanh(radianos))
+        c = 1/(math.tan(radianos))
         matrix[0, 0] = c/aspect_ratio
         matrix[1, 1] = c
         matrix[2, 2] = -((self.far_plane + self.near_plane)/(self.far_plane - self.near_plane))
