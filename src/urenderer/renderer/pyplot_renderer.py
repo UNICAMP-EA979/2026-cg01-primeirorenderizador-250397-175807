@@ -75,7 +75,7 @@ class PyplotRenderer(Renderer):
         # Projete o triângulo, combinando a matriz de transformação do modelo,
         # view matriz (self._view_matrix) e a matriz de projeção (self._projection_matrix)
 
-        triangle_proj = self._view_matrix @ self._projection_matrix
+        triangle_proj = triangle @ self._view_matrix @ self._projection_matrix
 
         #########################################################################
 
@@ -121,10 +121,10 @@ class PyplotRenderer(Renderer):
             else:
                 triangle[i] = triangle @ [0, 0, 0, 0]
 
-        if clip == True:
-            return clip, triangle
+        if not clip:
+            return (not clip), triangle
 
-        return clip, triangle
+        return (not clip), triangle
         #########################################################################
 
     def _stage_screen_mapping(self, triangle: np.ndarray) -> np.ndarray:
@@ -145,7 +145,7 @@ class PyplotRenderer(Renderer):
         # A segunda coordenada deve ser mapeada para [0, self.screen_height]
         for i in range(3):
             triangle[i][0] = ((triangle[i][0] + 1)/2) * self.screen_width
-            triangle[i][1] = ((triangle[i][0] + 1)/2) * self.screen_height
+            triangle[i][1] = ((triangle[i][1] + 1)/2) * self.screen_height
             triangle[i][2] = (triangle[i][2] + 1)/2
 
         #########################################################################
