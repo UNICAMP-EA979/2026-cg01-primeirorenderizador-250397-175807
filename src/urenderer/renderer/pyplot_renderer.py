@@ -75,7 +75,7 @@ class PyplotRenderer(Renderer):
         # Projete o triângulo, combinando a matriz de transformação do modelo,
         # view matriz (self._view_matrix) e a matriz de projeção (self._projection_matrix)
 
-        triangle_proj = self._view_matrix * self._projection_matrix
+        triangle_proj = self._view_matrix @ self._projection_matrix
 
         #########################################################################
 
@@ -104,20 +104,25 @@ class PyplotRenderer(Renderer):
         # Todos os vértices do triângulo devem estar dentro do volume: -v_w <= v_x, v_y, v_z <= v_w
 
         # Checa se o triângulo removido
-        x = triangle[0][0]
-        y = triangle[1][1]
-        z = triangle[2][2]
-        w = triangle[3][3]
-        clip = (-w <= x and x <= w) and (-w <= y and y <= w) and (-w <= z and z <= w)
+        clip = True
+        for i in range(3):
+            x = triangle[i][0]
+            y = triangle[i][1]
+            z = triangle[i][2]
+            w = triangle[i][3]
+            if (w < 0):
+                w = -w
+            clip = clip and (-w <= x and x <= w) and (-w <= y and y <= w) and (-w <= z and z <= w)
 
         # Normalize o triângulo, dividindo cada vértice pelo seu último valor v_w
-        if (triangle[3][3] != 0):
-            triangle_ndc = triangle/triangle[3][3]
-        else:
-            triangle_ndc = triangle * 0
+        for i in range(3):
+            if (triangle[i][3] != 0):
+                triangle[i] = triangle[i]/triangle[i][3]
+            else:
+                triangle[i] = triangle @ [0, 0, 0, 0]
 
         if clip == True:
-            return clip, triangle_ndc
+            return clip, triangle
 
         return clip, triangle
         #########################################################################
@@ -138,7 +143,10 @@ class PyplotRenderer(Renderer):
         # Mapeie o triângulo que está no intervalo [-1, 1]
         # A primeira coordenada deve ser mapeada para [0, self.screen_width]
         # A segunda coordenada deve ser mapeada para [0, self.screen_height]
-
+        for i in range(3):
+            triangle[i][0] = ((triangle[i][0] + 1)/2) * self.screen_width
+            triangle[i][1] = ((triangle[i][0] + 1)/2) * self.screen_height
+            triangle[i][2] = (triangle[i][2] + 1)/2
 
         #########################################################################
 
