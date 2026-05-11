@@ -75,12 +75,12 @@ class PyplotRenderer(Renderer):
         # Projete o triângulo, combinando a matriz de transformação do modelo,
         # view matriz (self._view_matrix) e a matriz de projeção (self._projection_matrix)
 
-        triangle_proj_1 =  self._projection_matrix @ self._view_matrix @ model_transformation @ triangle
-        triangle_proj_2 =  self._projection_matrix @ self._view_matrix @ triangle @ model_transformation
-        triangle_proj_3 =  self._projection_matrix @ triangle @ model_transformation @ self._view_matrix
-        triangle_proj_4 =  self._projection_matrix @ triangle @ self._view_matrix @ model_transformation
-        triangle_proj_5 =  self._projection_matrix @ model_transformation @ triangle @ self._view_matrix
-        triangle_proj_6 =  self._projection_matrix @ model_transformation @ self._view_matrix @ triangle
+        triangle_proj_1 =  triangle @ (model_transformation @ self._view_matrix @ self._projection_matrix)
+        triangle_proj_2 =  triangle @ (model_transformation @ self._projection_matrix @ self._view_matrix)
+        triangle_proj_3 =  triangle @ (self._view_matrix @ model_transformation @ self._projection_matrix)
+        triangle_proj_4 =  triangle @ (self._view_matrix @ self._projection_matrix @ model_transformation)
+        triangle_proj_5 =  triangle @ (self._projection_matrix @ self._view_matrix @ model_transformation)
+        triangle_proj_6 =  triangle @ (self._projection_matrix @ model_transformation @ self._view_matrix)
 
         triangle_proj = triangle_proj_1
         triangle_proj[0][1] = triangle_proj_2[0][1]
@@ -151,7 +151,6 @@ class PyplotRenderer(Renderer):
         # A segunda coordenada deve ser mapeada para [0, self.screen_height]
         triangle[0] = ((triangle[0] + 1)/2) * self.screen_width
         triangle[1] = ((triangle[1] + 1)/2) * self.screen_height
-        triangle[2] = ((triangle[2] + 1)/2)
 
         #########################################################################
 
