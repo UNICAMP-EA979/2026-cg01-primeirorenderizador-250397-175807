@@ -75,7 +75,7 @@ class PyplotRenderer(Renderer):
         # Projete o triângulo, combinando a matriz de transformação do modelo,
         # view matriz (self._view_matrix) e a matriz de projeção (self._projection_matrix)
 
-        triangle_proj = model_transformation @ self._view_matrix @ self._projection_matrix
+        triangle_proj = model_transformation @ self._projection_matrix @ self._view_matrix
 
         #########################################################################
 
@@ -108,8 +108,8 @@ class PyplotRenderer(Renderer):
         for i in range(3):
             x = triangle[i][0]
             y = triangle[i][1]
-            w = triangle[i][2]
-            y = triangle[i][3]
+            z = triangle[i][2]
+            w = triangle[i][3]
             clip = clip and (-w <= x and x <= w) and (-w <= y and y <= w) and (-w <= z and z <= w)
 
         # Normalize o triângulo, dividindo cada vértice pelo seu último valor v_w
@@ -137,6 +137,7 @@ class PyplotRenderer(Renderer):
             triangle[i][0] = (triangle[i][0] + 1)/2
             triangle[i][1] = (triangle[i][1] + 1)/2
             triangle[i][2] = (triangle[i][2] + 1)/2
+            triangle[i][3] = 1
         
         triangle[0] = triangle[0] * self.screen_width
         triangle[1] = triangle[1] * self.screen_height
