@@ -75,7 +75,20 @@ class PyplotRenderer(Renderer):
         # Projete o triângulo, combinando a matriz de transformação do modelo,
         # view matriz (self._view_matrix) e a matriz de projeção (self._projection_matrix)
 
-        triangle_proj =  triangle @ model_transformation @ self._view_matrix @ self._projection_matrix
+        triangle_proj_1 =  triangle @ model_transformation @ self._view_matrix @ self._projection_matrix
+        triangle_proj_2 =  triangle @ model_transformation @ self._projection_matrix @ self._view_matrix
+        triangle_proj_3 =  triangle @ self._view_matrix @ model_transformation @ self._projection_matrix
+        triangle_proj_4 =  triangle @ self._view_matrix @ self._projection_matrix @ model_transformation
+        triangle_proj_5 =  triangle @ self._projection_matrix @ self._view_matrix @ model_transformation
+        triangle_proj_6 =  triangle @ self._projection_matrix @ model_transformation @ self._view_matrix
+
+        triangle_proj = triangle_proj_1
+        triangle_proj[0][1] = triangle_proj_2
+        triangle_proj[0][2] = triangle_proj_3
+        triangle_proj[0][3] = triangle_proj_4
+        triangle_proj[1][0] = triangle_proj_5
+        triangle_proj[1][1] = triangle_proj_6
+
 
         #########################################################################
 
@@ -137,12 +150,10 @@ class PyplotRenderer(Renderer):
         # A primeira coordenada deve ser mapeada para [0, self.screen_width]
         # A segunda coordenada deve ser mapeada para [0, self.screen_height]
         for i in range(3):
-            triangle[i][0] = (triangle[i][0] + 1)/2 * self.screen_width
-            triangle[i][1] = (triangle[i][1] + 1)/2 * self.screen_height
-            triangle[i][2] = (triangle[i][2] + 1)/2
+            triangle[i] = (triangle[i] + 1)/2
         
-        triangle[0] /= self.screen_width
-        triangle[1] /= self.screen_height
+        triangle[0] = triangle[0] * self.screen_width
+        triangle[2] = triangle[2] * self.screen_height
 
         #########################################################################
 
