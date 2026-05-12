@@ -75,7 +75,7 @@ class PyplotRenderer(Renderer):
         # Projete o triângulo, combinando a matriz de transformação do modelo,
         # view matriz (self._view_matrix) e a matriz de projeção (self._projection_matrix)
 
-        triangle_proj = triangle @ self._projection_matrix @ self._view_matrix @ model_transformation
+        triangle_proj = self._projection_matrix @ self._view_matrix @ model_transformation
 
         #########################################################################
 
@@ -137,8 +137,8 @@ class PyplotRenderer(Renderer):
         # A primeira coordenada deve ser mapeada para [0, self.screen_width]
         # A segunda coordenada deve ser mapeada para [0, self.screen_height]
         triangle[:, :] = ((triangle[:, :] + 1)/2)
-        triangle[0, :] *= self.screen_width
-        triangle[1, :] *= self.screen_height
+        triangle[:, 0] *= self.screen_width
+        triangle[:, 1] *= self.screen_height
         #########################################################################
 
         return triangle
