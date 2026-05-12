@@ -107,16 +107,16 @@ class PyplotRenderer(Renderer):
         # Checa se o triângulo removido
         clip = True
         for i in range(3):
-            x = triangle[i][0]
-            y = triangle[i][1]
-            z = triangle[i][2]
-            w = triangle[i][3]
+            x = triangle[i, 0]
+            y = triangle[i, 1]
+            z = triangle[i, 2]
+            w = triangle[i, 3]
             clip = clip and (-w <= x and x <= w) and (-w <= y and y <= w) and (-w <= z and z <= w)
 
         # Normalize o triângulo, dividindo cada vértice pelo seu último valor v_w
         if (clip):
             for i in range(3):
-                triangle[i] /= triangle[i][3]
+                triangle[i] /= triangle[i, 3]
 
         return (not clip), triangle
         #########################################################################
@@ -137,10 +137,9 @@ class PyplotRenderer(Renderer):
         # Mapeie o triângulo que está no intervalo [-1, 1]
         # A primeira coordenada deve ser mapeada para [0, self.screen_width]
         # A segunda coordenada deve ser mapeada para [0, self.screen_height]
-        for i in range(3):
-            triangle[0][i] = ((triangle[0][i] + 1)/2) * self.screen_width
-            triangle[1][i] = ((triangle[1][i] + 1)/2) * self.screen_height
-            triangle[2][i] = (triangle[2][i] + 1)/2
+        triangle[0, :] = ((triangle[0, :] + 1)/2) * self.screen_width
+        triangle[1, :] = ((triangle[1, :] + 1)/2) * self.screen_height
+        triangle[2, :] = (triangle[2, :] + 1)/2
         #########################################################################
 
         return triangle
