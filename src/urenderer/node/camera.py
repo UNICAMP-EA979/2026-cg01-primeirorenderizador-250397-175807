@@ -1,6 +1,7 @@
 import numpy as np
 
 from .node import Node
+import math
 
 
 class Camera(Node):
@@ -35,6 +36,14 @@ class Camera(Node):
         ## SEU CÓDIGO AQUI #####################################################
         # Crie a matriz de projeção utilizando a fórmula
         matrix = np.zeros((4, 4))
+        aspect_ratio = self.screen_width/self.screen_height
+        radianos = math.radians(self.vertical_fov/2)
+        c = 1/(math.tan(radianos))
+        matrix[0, 0] = c/aspect_ratio
+        matrix[1, 1] = c
+        matrix[2, 2] = -((self.far_plane + self.near_plane)/(self.far_plane - self.near_plane))
+        matrix[2, 3] = -((2 * self.far_plane * self.near_plane)/(self.far_plane - self.near_plane))
+        matrix[3, 2] = -1
 
         #########################################################################
 

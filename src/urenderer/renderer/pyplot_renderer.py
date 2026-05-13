@@ -73,10 +73,10 @@ class PyplotRenderer(Renderer):
         '''
         ## SEU CÓDIGO AQUI #####################################################
         # Projete o triângulo, combinando a matriz de transformação do modelo,
-        #  view matriz (self._view_matrix) e a matriz de projeção (self._projection_matrix)
+        # view matriz (self._view_matrix) e a matriz de projeção (self._projection_matrix)
 
-        triangle_proj =
-
+        triangle_transformation = (self._projection_matrix @ self._view_matrix @ model_transformation).T
+        triangle_proj = triangle @ triangle_transformation
         #########################################################################
 
         return triangle_proj
@@ -104,15 +104,20 @@ class PyplotRenderer(Renderer):
         # Todos os vértices do triângulo devem estar dentro do volume: -v_w <= v_x, v_y, v_z <= v_w
 
         # Checa se o triângulo removido
-        clip =
+        clip = True
+        for i in range(3):
+            x = triangle[i, 0]
+            y = triangle[i, 1]
+            z = triangle[i, 2]
+            w = triangle[i, 3]
+            clip = clip and (-w <= x and x <= w) and (-w <= y and y <= w) and (-w <= z and z <= w)
 
-        if not clip:
-            # Normalize o triângulo, dividindo cada vértice pelo seu último valor v_w
-            triangle_ndc =
+        # Normalize o triângulo, dividindo cada vértice pelo seu último valor v_w
+        if (clip):
+            for i in range(3):
+                triangle[i] /= triangle[i, 3]
 
-            return clip, triangle_ndc
-
-        return clip, triangle
+        return (not clip), triangle
         #########################################################################
 
     def _stage_screen_mapping(self, triangle: np.ndarray) -> np.ndarray:
@@ -131,7 +136,9 @@ class PyplotRenderer(Renderer):
         # Mapeie o triângulo que está no intervalo [-1, 1]
         # A primeira coordenada deve ser mapeada para [0, self.screen_width]
         # A segunda coordenada deve ser mapeada para [0, self.screen_height]
-
+        triangle[:, :] = ((triangle[:, :] + 1)/2)
+        triangle[:, 0] *= self.screen_width
+        triangle[:, 1] *= self.screen_height
         #########################################################################
 
         return triangle

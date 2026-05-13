@@ -12,4 +12,12 @@ if __name__ == "__main__":
 
     # Crie a cena
 
+    pyramid = urenderer.node.Node()
+
+    pyramid.translation = np.array([0, 0, -3], np.float64)
+    pyramid.rotation = np.array([0, 0, 0], np.float64)
+    pyramid.render_data = urenderer.geometry.polygonal_ifs.get_ifs_pyramid()
+
+    runtime.scene.add_child(pyramid)
+
     runtime.iter(capture=True)
