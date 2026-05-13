@@ -16,5 +16,20 @@ if __name__ == "__main__":
     runtime = urenderer.application.Runtime(renderer, name="04-intersection")
 
     # Crie a cena
+    cube_1 = urenderer.node.Node()
+
+    cube_1.translation = np.array([0, 0, -5], np.float64)
+    cube_1.rotation = np.array([45, 45, 45], np.float64)
+    cube_1.render_data = urenderer.geometry.polygonal_ifs.get_ifs_cube()
+
+    runtime.scene.add_child(cube_1)
+
+    cube_2 = urenderer.node.Node()
+
+    cube_2.translation = np.array([0.5, 1, 0], np.float64)
+    cube_2.rotation = np.array([45, 45, 45], np.float64)
+    cube_2.render_data = urenderer.geometry.polygonal_ifs.get_ifs_cube()
+
+    cube_1.add_child(cube_2)
 
     runtime.iter(capture=True)
